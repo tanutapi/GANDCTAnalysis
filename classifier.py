@@ -35,24 +35,16 @@ tf.random.set_seed(1)
 
 def load_tfrecord(path, train=True, val=False, unbounded=True):
     """Load tfrecords."""
-    print(f'Loading ${path}')
     raw_image_dataset = tf.data.TFRecordDataset(path)
-    print(raw_image_dataset)
-    print(f'shape={INPUT_SHAPE}')
-    print(f'num_parallel_calls={AUTOTUNE}')
     dataset = raw_image_dataset.map(lambda x: deserialize_data(
         x, shape=INPUT_SHAPE), num_parallel_calls=AUTOTUNE)
-    print(dataset)
     if train:
         dataset = dataset.take(TRAIN_SIZE)
-        print(f'dataset.take({TRAIN_SIZE})')
 
     if val:
         dataset = dataset.take(VAL_SIZE)
-        print(f'dataset.take({VAL_SIZE})')
 
     dataset = dataset.batch(BATCH_SIZE)
-    print(f'dataset.batch({BATCH_SIZE})')
 
     if unbounded:
         dataset = dataset.repeat()
@@ -132,10 +124,6 @@ def train(args):
 
     model.summary()
 
-    print(f'epochs={args.epochs}')
-    print(f'steps_per_epoch={TRAIN_SIZE // BATCH_SIZE}')
-    print(f'callbacks={callbacks}')
-
     model.fit(train_dataset, epochs=args.epochs, steps_per_epoch=TRAIN_SIZE // BATCH_SIZE,
               validation_data=val_dataset,
               validation_steps=VAL_SIZE // BATCH_SIZE,
@@ -166,7 +154,6 @@ def test(args):
 
 def main(args):
     args.grayscale = True
-    print(f'Input shape is ${INPUT_SHAPE}')
     if args.mode == "train":
         train_and_save_model(args)
     elif args.mode == "test":
