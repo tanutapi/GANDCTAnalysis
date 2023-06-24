@@ -33,7 +33,7 @@ INPUT_SHAPE = [128, 128, CHANNEL_DIM]
 tf.random.set_seed(1)
 
 
-def load_tfrecord(path, train=True, val=False unbounded=True):
+def load_tfrecord(path, train=True, val=False, unbounded=True):
     """Load tfrecords."""
     print(f'Loading ${path}')
     raw_image_dataset = tf.data.TFRecordDataset(path)
