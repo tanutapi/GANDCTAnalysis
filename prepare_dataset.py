@@ -162,7 +162,7 @@ def main(args):
     # we always load images into numpy arrays
     # we additionally set a flag if we later convert to tensorflow records
     load_function = functools.partial(
-        load_image, tf=args.mode == "tfrecords")
+        load_image, grayscale=True, tf=args.mode == "tfrecords")
     transformation_function = None
     normalize_function = None
     absolute_function = None
