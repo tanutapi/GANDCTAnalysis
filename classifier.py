@@ -21,7 +21,7 @@ BATCH_SIZE = 32
 # TEST_SIZE = 10_000
 
 # complete size
-TRAIN_SIZE = 3000 #13500
+TRAIN_SIZE = 13500
 VAL_SIZE = 3000
 TEST_SIZE = 1500
 
@@ -33,7 +33,7 @@ INPUT_SHAPE = [128, 128, CHANNEL_DIM]
 tf.random.set_seed(1)
 
 
-def load_tfrecord(path, train=True, unbounded=True):
+def load_tfrecord(path, train=True, val=False unbounded=True):
     """Load tfrecords."""
     print(f'Loading ${path}')
     raw_image_dataset = tf.data.TFRecordDataset(path)
@@ -46,6 +46,10 @@ def load_tfrecord(path, train=True, unbounded=True):
     if train:
         dataset = dataset.take(TRAIN_SIZE)
         print(f'dataset.take({TRAIN_SIZE})')
+
+    if val:
+        dataset = dataset.take(VAL_SIZE)
+        print(f'dataset.take({VAL_SIZE})')
 
     dataset = dataset.batch(BATCH_SIZE)
     print(f'dataset.batch({BATCH_SIZE})')
@@ -98,8 +102,8 @@ def build_model(args):
 
 
 def train(args):
-    train_dataset = load_tfrecord(args.TRAIN_DATASET)
-    val_dataset = load_tfrecord(args.VAL_DATASET)
+    train_dataset = load_tfrecord(args.TRAIN_DATASET, train=True)
+    val_dataset = load_tfrecord(args.VAL_DATASET, val=False)
 
     model, model_name = build_model(args)
 
@@ -147,7 +151,7 @@ def train_and_save_model(args):
 
 
 def test(args):
-    test_dataset = load_tfrecord(args.TEST_DATASET, train=False)
+    test_dataset = load_tfrecord(args.TEST_DATASET, train=False, val=False)
 
     # load model
     model = tf.keras.models.load_model(args.MODEL)
