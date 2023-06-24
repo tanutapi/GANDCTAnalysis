@@ -21,9 +21,9 @@ BATCH_SIZE = 32
 # TEST_SIZE = 10_000
 
 # complete size
-TRAIN_SIZE = 4500
-VAL_SIZE = 100
-TEST_SIZE = 500
+TRAIN_SIZE = 13500
+VAL_SIZE = 3000
+TEST_SIZE = 1500
 
 CLASSES = 5
 CHANNEL_DIM = 3
@@ -35,13 +35,20 @@ tf.random.set_seed(1)
 
 def load_tfrecord(path, train=True, unbounded=True):
     """Load tfrecords."""
+    print(f'Loading ${path}')
     raw_image_dataset = tf.data.TFRecordDataset(path)
+    print(raw_image_dataset)
+    print(f'shape=${INPUT_SHAPE}')
+    print(f'num_parallel_calls=${AUTOTUNE}')
     dataset = raw_image_dataset.map(lambda x: deserialize_data(
         x, shape=INPUT_SHAPE), num_parallel_calls=AUTOTUNE)
+    print(dataset)
     if train:
         dataset = dataset.take(TRAIN_SIZE)
+        print(f'dataset.take(${TRAIN_SIZE})')
 
     dataset = dataset.batch(BATCH_SIZE)
+    print(f'dataset.batch(${BATCH_SIZE})')
 
     if unbounded:
         dataset = dataset.repeat()
