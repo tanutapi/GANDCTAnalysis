@@ -196,7 +196,7 @@ def parse_args():
     train.add_argument("--image_size",
                        help=f"Image size. Default: {INPUT_SHAPE}", type=int, default=128)
     train.add_argument("--early_stopping",
-                       help=f"Early stopping criteria. Default: 5", type=int, default=5)
+                       help=f"Early stopping criteria. Default: 50", type=int, default=50)
     train.add_argument("--classes",
                        help=f"Classes. Default: {CLASSES}", type=int, default=CLASSES)
     train.add_argument("--grayscale", "-g",
