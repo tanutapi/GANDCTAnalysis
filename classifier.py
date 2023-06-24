@@ -131,6 +131,11 @@ def train(args):
         ]
 
     model.summary()
+
+    print(f'epochs={args.epochs}')
+    print(f'steps_per_epoch={TRAIN_SIZE // BATCH_SIZE}')
+    print(f'callbacks={callbacks}')
+
     model.fit(train_dataset, epochs=args.epochs, steps_per_epoch=TRAIN_SIZE // BATCH_SIZE,
               validation_data=val_dataset,
               validation_steps=VAL_SIZE // BATCH_SIZE,
