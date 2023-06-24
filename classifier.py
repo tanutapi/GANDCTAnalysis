@@ -150,6 +150,7 @@ def test(args):
 
 def main(args):
     args.grayscale = True
+    print(f'Input shape is ${INPUT_SHAPE}')
     if args.mode == "train":
         train_and_save_model(args)
     elif args.mode == "test":
