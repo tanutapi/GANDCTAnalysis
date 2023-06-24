@@ -102,8 +102,8 @@ def build_model(args):
 
 
 def train(args):
-    train_dataset = load_tfrecord(args.TRAIN_DATASET, train=True)
-    val_dataset = load_tfrecord(args.VAL_DATASET, val=False)
+    train_dataset = load_tfrecord(args.TRAIN_DATASET, train=True, val=False)
+    val_dataset = load_tfrecord(args.VAL_DATASET, train=False, val=True)
 
     model, model_name = build_model(args)
 
