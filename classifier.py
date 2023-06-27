@@ -21,9 +21,9 @@ BATCH_SIZE = 32
 # TEST_SIZE = 10_000
 
 # complete size
-TRAIN_SIZE = 500_000
-VAL_SIZE = 50_000
-TEST_SIZE = 150_000
+TRAIN_SIZE = 13500
+VAL_SIZE = 3000
+TEST_SIZE = 1500
 
 CLASSES = 5
 CHANNEL_DIM = 3
@@ -33,13 +33,16 @@ INPUT_SHAPE = [128, 128, CHANNEL_DIM]
 tf.random.set_seed(1)
 
 
-def load_tfrecord(path, train=True, unbounded=True):
+def load_tfrecord(path, train=True, val=False, unbounded=True):
     """Load tfrecords."""
     raw_image_dataset = tf.data.TFRecordDataset(path)
     dataset = raw_image_dataset.map(lambda x: deserialize_data(
         x, shape=INPUT_SHAPE), num_parallel_calls=AUTOTUNE)
     if train:
         dataset = dataset.take(TRAIN_SIZE)
+
+    if val:
+        dataset = dataset.take(VAL_SIZE)
 
     dataset = dataset.batch(BATCH_SIZE)
 
@@ -91,8 +94,8 @@ def build_model(args):
 
 
 def train(args):
-    train_dataset = load_tfrecord(args.TRAIN_DATASET)
-    val_dataset = load_tfrecord(args.VAL_DATASET)
+    train_dataset = load_tfrecord(args.TRAIN_DATASET, train=True, val=False)
+    val_dataset = load_tfrecord(args.VAL_DATASET, train=False, val=True)
 
     model, model_name = build_model(args)
 
@@ -120,6 +123,7 @@ def train(args):
         ]
 
     model.summary()
+
     model.fit(train_dataset, epochs=args.epochs, steps_per_epoch=TRAIN_SIZE // BATCH_SIZE,
               validation_data=val_dataset,
               validation_steps=VAL_SIZE // BATCH_SIZE,
@@ -140,7 +144,7 @@ def train_and_save_model(args):
 
 
 def test(args):
-    test_dataset = load_tfrecord(args.TEST_DATASET, train=False)
+    test_dataset = load_tfrecord(args.TEST_DATASET, train=False, val=False)
 
     # load model
     model = tf.keras.models.load_model(args.MODEL)
@@ -179,7 +183,7 @@ def parse_args():
     train.add_argument("--image_size",
                        help=f"Image size. Default: {INPUT_SHAPE}", type=int, default=128)
     train.add_argument("--early_stopping",
-                       help=f"Early stopping criteria. Default: 5", type=int, default=5)
+                       help=f"Early stopping criteria. Default: 10", type=int, default=10)
     train.add_argument("--classes",
                        help=f"Classes. Default: {CLASSES}", type=int, default=CLASSES)
     train.add_argument("--grayscale", "-g",
